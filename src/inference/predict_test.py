@@ -131,19 +131,24 @@ def _score_feature_file(
         return matches
 
     chunk_iter = pd.read_csv(features_tsv, sep="\t", chunksize=100_000)
-    for chunk in chunk_iter:
-        if chunk.empty:
-            continue
-        X = chunk[FEATURE_COLS].fillna(0.0).to_numpy(dtype=np.float32)
-        scores = predict_scores(model, X)
-        for s1_id, c_id, score in zip(
-            chunk["source1_entity_id"].astype(str),
-            chunk["candidate_entity_id"].astype(str),
-            scores,
-        ):
-            if float(score) < threshold:
+    try:
+        for chunk in chunk_iter:
+            if chunk.empty:
                 continue
-            matches.setdefault(s1_id, []).append((c_id, float(score)))
+            X = chunk[FEATURE_COLS].fillna(0.0).to_numpy(dtype=np.float32)
+            scores = predict_scores(model, X)
+            for s1_id, c_id, score in zip(
+                chunk["source1_entity_id"].astype(str),
+                chunk["candidate_entity_id"].astype(str),
+                scores,
+            ):
+                if float(score) < threshold:
+                    continue
+                matches.setdefault(s1_id, []).append((c_id, float(score)))
+    finally:
+        chunk_iter.close()
+        del chunk_iter
+        gc.collect()
     return matches
 
 
@@ -320,7 +325,7 @@ def run_test_inference(
     all_cands: Dict[str, List[str]] = {sid: [] for sid in s1_order}
     all_matches: Dict[str, List[str]] = {sid: [] for sid in s1_order}
 
-    with tempfile.TemporaryDirectory(prefix="ber_infer_", dir=str(output_dir)) as tmp:
+    with tempfile.TemporaryDirectory(prefix="ber_infer_", dir=str(output_dir), ignore_cleanup_errors=True) as tmp:
         work_dir = Path(tmp)
         for country in countries:
             if country:
