@@ -33,11 +33,7 @@ for code_point in range(0x10000):
     if not cat.startswith(("L", "N", "M")):
         _PUNCT_TABLE[code_point] = 32  # ASCII space ord(' ')
 
-# Regex for stripping domain extensions & web noise from business names
-_RE_WWW = re.compile(r"\bwww\.", flags=re.IGNORECASE)
-_RE_DOMAINS = re.compile(r"\.(com|org|net|co|in|io|ai|biz|info)\b", flags=re.IGNORECASE)
-
-# Legal suffix patterns across English, Hindi, and French
+# Multilingual legal suffix patterns (English, Hindi, French)
 _LEGAL_PATTERNS = [
     r"\bpvt\.?\s*ltd\.?\b",
     r"\bprivate\s+limited\b",
@@ -67,6 +63,10 @@ _LEGAL_PATTERNS = [
     r"कंपनी",
 ]
 _RE_LEGAL = re.compile("|".join(_LEGAL_PATTERNS), flags=re.IGNORECASE | re.UNICODE)
+
+# Regex for stripping domain extensions & web noise from business names
+_RE_WWW = re.compile(r"\bwww\.", flags=re.IGNORECASE)
+_RE_DOMAINS = re.compile(r"\.(com|org|net|co|in|io|ai|biz|info)\b", flags=re.IGNORECASE)
 
 # Fast token mapping for standardizing common address words
 _ADDRESS_MAP = {
@@ -109,7 +109,12 @@ def normalize_text(text: Optional[str]) -> str:
 
 
 def clean_name_string(text: Optional[str], strip_legal_forms: bool = True) -> str:
-    """Normalize a business name string, removing domain noise and standardizing legal suffixes."""
+    """Normalize a business name string.
+    
+    - Strips domain noise (www., .com).
+    - Strips legal entity suffixes (English, Hindi, French: SARL, SASU, EURL, Pvt Ltd, Inc, etc.).
+    - Applies standard text normalization (preserves accents and non-Latin scripts).
+    """
     if text is None or not isinstance(text, str) or not text.strip():
         return ""
     # Strip web prefix / domain extension
@@ -122,7 +127,6 @@ def clean_name_string(text: Optional[str], strip_legal_forms: bool = True) -> st
         if stripped.strip():
             s = stripped
 
-    # Apply standard text normalization (preserves accents and non-Latin scripts)
     return normalize_text(s)
 
 

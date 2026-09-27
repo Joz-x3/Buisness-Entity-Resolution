@@ -13,6 +13,13 @@ import time
 from pathlib import Path
 from typing import Optional
 
+# Reconfigure stdout for UTF-8 compatibility on Windows terminal
+if hasattr(sys.stdout, "reconfigure"):
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+
 # Ensure project root is in sys.path
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(PROJECT_ROOT) not in sys.path:
@@ -80,11 +87,33 @@ def run_pipeline(
     start_time = time.time()
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    # Resolve train folder case-insensitively
+    # Resolve train folder automatically
     if not train_dir.exists():
-        alt_train = train_dir.parent / "Train" if train_dir.name == "train" else train_dir.parent / "train"
-        if alt_train.exists():
-            train_dir = alt_train
+        for alt in [
+            PROJECT_ROOT / "data" / "train",
+            train_dir.parent / "data" / "train",
+            train_dir.parent / "Train",
+            train_dir.parent / "train",
+            PROJECT_ROOT / "Train",
+            PROJECT_ROOT / "train",
+        ]:
+            if alt.exists():
+                train_dir = alt
+                break
+
+    # Resolve test folder automatically
+    if not test_dir.exists():
+        for alt in [
+            PROJECT_ROOT / "data" / "test",
+            test_dir.parent / "data" / "test",
+            test_dir.parent / "Test",
+            test_dir.parent / "test",
+            PROJECT_ROOT / "Test",
+            PROJECT_ROOT / "test",
+        ]:
+            if alt.exists():
+                test_dir = alt
+                break
 
     logger.info("Starting Preprocessing Pipeline")
     logger.info("Train directory: %s", train_dir)
@@ -181,8 +210,8 @@ def run_pipeline(
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run Preprocessing Pipeline")
-    parser.add_argument("--train-dir", type=Path, default=Path("Train"), help="Path to raw train data directory")
-    parser.add_argument("--test-dir", type=Path, default=Path("test"), help="Path to raw test data directory")
+    parser.add_argument("--train-dir", type=Path, default=PROJECT_ROOT / "data" / "train", help="Path to raw train data directory")
+    parser.add_argument("--test-dir", type=Path, default=PROJECT_ROOT / "data" / "test", help="Path to raw test data directory")
     parser.add_argument("--output-dir", type=Path, default=Path("artifacts/preprocessing"), help="Output directory")
     parser.add_argument("--val-ratio", type=float, default=0.20, help="Validation split ratio")
     parser.add_argument("--seed", type=int, default=42, help="Random seed for splitting")
