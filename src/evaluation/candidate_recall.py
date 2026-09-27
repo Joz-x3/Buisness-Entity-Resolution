@@ -43,13 +43,14 @@ def compute_candidate_recall(candidate_pairs_tsv: Path, ground_truth_tsv: Path) 
 
     logger.info("Reading candidate pairs from %s...", candidate_pairs_tsv)
     cand_pairs: Set[Tuple[str, str]] = set()
-    total_s1_entities = 0
+    evaluated_s1_entities: Set[str] = set()
 
     with open(candidate_pairs_tsv, "r", encoding="utf-8", errors="replace") as f:
         reader = csv.DictReader(f, delimiter="\t")
         for row in reader:
-            total_s1_entities += 1
             s1_id = str(row.get("source1_entity_id", "")).strip()
+            if s1_id:
+                evaluated_s1_entities.add(s1_id)
             cands_raw = str(row.get("candidate_entity_ids", row.get("candidate_entity_id", ""))).strip()
             if cands_raw and cands_raw.lower() != "nan":
                 for c in cands_raw.split(","):
@@ -58,22 +59,25 @@ def compute_candidate_recall(candidate_pairs_tsv: Path, ground_truth_tsv: Path) 
                         cand_pairs.add((s1_id, c_clean))
 
     total_candidates = len(cand_pairs)
-    retained_matches = len(cand_pairs.intersection(gt_pairs))
+    evaluated_gt_pairs = {p for p in gt_pairs if p[0] in evaluated_s1_entities}
+    total_evaluated_gt = len(evaluated_gt_pairs)
+    retained_matches = len(cand_pairs.intersection(evaluated_gt_pairs))
 
-    recall_ceiling = retained_matches / total_gt_matches if total_gt_matches > 0 else 0.0
-    avg_candidates_per_s1 = total_candidates / total_s1_entities if total_s1_entities > 0 else 0.0
+    recall_ceiling = retained_matches / total_evaluated_gt if total_evaluated_gt > 0 else 0.0
+    avg_candidates_per_s1 = total_candidates / len(evaluated_s1_entities) if evaluated_s1_entities else 0.0
 
     metrics = {
-        "total_ground_truth_matches": total_gt_matches,
+        "evaluated_s1_entities": len(evaluated_s1_entities),
+        "evaluated_ground_truth_matches": total_evaluated_gt,
         "total_candidate_pairs": total_candidates,
         "retained_matches": retained_matches,
-        "missed_matches": total_gt_matches - retained_matches,
+        "missed_matches": total_evaluated_gt - retained_matches,
         "blocking_recall_ceiling": round(recall_ceiling, 4),
         "avg_candidates_per_s1": round(avg_candidates_per_s1, 2),
     }
 
     logger.info("Candidate Blocking Quality Metrics:")
-    logger.info("  Blocking Recall Ceiling: %.4f (Retained %d / %d matches)", recall_ceiling, retained_matches, total_gt_matches)
+    logger.info("  Blocking Recall Ceiling: %.4f (Retained %d / %d matches)", recall_ceiling, retained_matches, total_evaluated_gt)
     logger.info("  Avg Candidates per S1 Entity: %.2f", avg_candidates_per_s1)
 
     return metrics

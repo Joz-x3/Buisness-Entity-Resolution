@@ -151,7 +151,8 @@ def main():
     parser.add_argument("--tfidf-top-k", type=int, default=25, help="Top K candidates for TF-IDF blocker")
     parser.add_argument("--lexical-max-k", type=int, default=50, help="Max candidates per query for Lexical blocker")
     parser.add_argument("--min-similarity", type=float, default=0.35, help="Minimum TF-IDF similarity threshold")
-    parser.add_argument("--sample-size", type=int, default=None, help="Limit rows for testing")
+    parser.add_argument("--sample-size", type=int, default=None, help="Limit Source 1 query rows for testing")
+    parser.add_argument("--cand-sample-size", type=int, default=None, help="Optional limit on candidate pool rows for testing")
     parser.add_argument("--skip-tfidf", action="store_true", help="Skip TF-IDF blocker and use lexical blocking only")
     parser.add_argument("--demo", action="store_true", help="Run demonstration benchmark mode")
 
@@ -206,10 +207,10 @@ def main():
     candidate_dfs = []
     if s2_path.exists():
         logger.info("Loading Source 2 from: %s", s2_path)
-        candidate_dfs.append(load_tsv(s2_path, nrows=args.sample_size))
+        candidate_dfs.append(load_tsv(s2_path, nrows=args.cand_sample_size))
     if s3_path.exists():
         logger.info("Loading Source 3 from: %s", s3_path)
-        candidate_dfs.append(load_tsv(s3_path, nrows=args.sample_size))
+        candidate_dfs.append(load_tsv(s3_path, nrows=args.cand_sample_size))
 
     if not candidate_dfs:
         raise FileNotFoundError(f"Neither Source 2 nor Source 3 could be found at {s2_path} / {s3_path}")

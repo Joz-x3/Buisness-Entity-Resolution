@@ -20,7 +20,16 @@ def validate_submission(matching_tsv: Path, candidate_tsv: Path, test_dir: Path)
     """Validate submission files against official competition rules."""
     test_s1_path = test_dir / "test_source1.tsv"
     if not test_s1_path.exists():
-        test_s1_path = test_dir / "test_s1.tsv"
+        for alt in [
+            test_dir / "test_s1.tsv",
+            test_dir.parent / "test" / "test_source1.tsv",
+            test_dir.parent / "Test" / "test_source1.tsv",
+            Path("test") / "test_source1.tsv",
+            Path("Test") / "test_source1.tsv",
+        ]:
+            if alt.exists():
+                test_s1_path = alt
+                break
 
     if not test_s1_path.exists():
         print(f"Error: Cannot find test_source1.tsv in {test_dir}")

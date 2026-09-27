@@ -51,6 +51,13 @@ def run_test_inference(
     logger.info("  STARTING END-TO-END TEST INFERENCE PIPELINE     ")
     logger.info("==================================================")
 
+    # Resolve test directory if default does not exist
+    if not (test_dir / "test_source1.tsv").exists():
+        for alt in [PROJECT_ROOT / "test", PROJECT_ROOT / "Test", PROJECT_ROOT / "data" / "test"]:
+            if (alt / "test_source1.tsv").exists():
+                test_dir = alt
+                break
+
     test_s1_path = test_dir / "test_source1.tsv"
     test_s2_path = test_dir / "test_source2.tsv"
     test_s3_path = test_dir / "test_source3.tsv"
