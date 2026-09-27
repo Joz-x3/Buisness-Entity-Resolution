@@ -9,7 +9,7 @@ import csv
 import logging
 import sys
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Set, Tuple
 
 import numpy as np
 import pandas as pd
@@ -32,6 +32,49 @@ from src.preprocessing.load_data import load_tsv
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger(__name__)
+
+
+def get_needed_entity_ids(pairs_tsv: Path, max_pairs: Optional[int] = None) -> Tuple[Set[str], Set[str]]:
+    """Scan pairs_tsv to find only the entity IDs needed for feature computation."""
+    needed_s1: Set[str] = set()
+    needed_cand: Set[str] = set()
+    total = 0
+    with open(pairs_tsv, "r", encoding="utf-8", errors="replace") as f:
+        reader = csv.DictReader(f, delimiter="\t")
+        for row in reader:
+            s1 = row.get("source1_entity_id", "").strip()
+            c = row.get("candidate_entity_id", "").strip()
+            if s1:
+                needed_s1.add(s1)
+            if c:
+                needed_cand.add(c)
+            total += 1
+            if max_pairs and total >= max_pairs:
+                break
+    return needed_s1, needed_cand
+
+
+def load_entity_attributes_from_tsv(
+    tsv_path: Path,
+    needed_ids: Optional[Set[str]] = None,
+) -> Dict[str, Tuple[str, str, str]]:
+    """Stream TSV and index entity attributes with optional ID filtering for fast memory footprint."""
+    lookup: Dict[str, Tuple[str, str, str]] = {}
+    if not tsv_path.exists():
+        return lookup
+    with open(tsv_path, "r", encoding="utf-8", errors="replace") as f:
+        reader = csv.DictReader(f, delimiter="\t")
+        for row in reader:
+            eid = row.get("entity_id", "").strip()
+            if needed_ids is not None and eid not in needed_ids:
+                continue
+            name = row.get("business_name_normalized", "") or ""
+            addr = row.get("business_address_normalized", "") or ""
+            country = row.get("country_normalized", "") or ""
+            lookup[eid] = (name, addr, country)
+            if needed_ids is not None and len(lookup) >= len(needed_ids):
+                break
+    return lookup
 
 
 def load_entity_attributes(df: pd.DataFrame) -> Dict[str, Tuple[str, str, str]]:
@@ -173,21 +216,23 @@ def main():
 
     args = parser.parse_args()
 
-    logger.info("Loading entity attribute tables for feature extraction...")
-    s1_df = load_tsv(args.source1)
-    s1_lookup = load_entity_attributes(s1_df)
-    del s1_df
+    logger.info("Scanning pairs to identify required entity IDs...")
+    needed_s1, needed_cand = get_needed_entity_ids(args.pairs, max_pairs=args.max_pairs)
+    logger.info("Identified %d unique Source 1 IDs and %d candidate IDs.", len(needed_s1), len(needed_cand))
+
+    logger.info("Loading Source 1 attributes from %s...", args.source1)
+    s1_lookup = load_entity_attributes_from_tsv(args.source1, needed_ids=needed_s1)
 
     cand_lookup = {}
     if args.source2.exists():
-        s2_df = load_tsv(args.source2)
-        cand_lookup.update(load_entity_attributes(s2_df))
-        del s2_df
+        logger.info("Loading Source 2 attributes from %s...", args.source2)
+        cand_lookup.update(load_entity_attributes_from_tsv(args.source2, needed_ids=needed_cand))
 
     if args.source3.exists():
-        s3_df = load_tsv(args.source3)
-        cand_lookup.update(load_entity_attributes(s3_df))
-        del s3_df
+        logger.info("Loading Source 3 attributes from %s...", args.source3)
+        cand_lookup.update(load_entity_attributes_from_tsv(args.source3, needed_ids=needed_cand))
+
+    logger.info("Loaded attributes: %d Source 1 entities, %d candidates.", len(s1_lookup), len(cand_lookup))
 
     build_pair_features(
         pairs_tsv=args.pairs,
