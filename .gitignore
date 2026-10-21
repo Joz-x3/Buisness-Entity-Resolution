@@ -24,6 +24,8 @@ RTPS_PRESENTATION_GUIDE.md
 docs/
 build_simple_rtps_ppt.py
 generate_rtps_ppt.py
+rtps_review_demo.py
+rtps_presentation_assets/
 
 # Submission archives and temp submission directory
 TECHNOBLADE_submission/
