@@ -1,7 +1,30 @@
-*.tsv
+# Byte-compiled / cache files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Large datasets & Raw data directories (12M+ records)
 Train/
 test/
-artifacts/preprocessing/*.tsv
-__pycache__/
-*.pyc
+data/
+*.tsv
+*.csv
+*.parquet
+
+# Output datasets & Intermediate inference files
+output/*.tsv
+output/ber_infer_*
+
+# Submission archives and temp submission directory
+TECHNOBLADE_submission/
+*.zip
+*.tar.gz
+*.7z
+
+# Operating System & IDE
 .DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp

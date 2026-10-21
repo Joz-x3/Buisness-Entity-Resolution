@@ -156,7 +156,7 @@ def _block_chunk(
     chunk: pd.DataFrame,
     lexical: LexicalBlocker,
     tfidf: Optional[TFIDFBlocker],
-    lexical_max_k: int = 50,
+    lexical_max_k: int = 12,
 ) -> Dict[str, List[str]]:
     """Query pre-fit blockers for one S1 chunk; return sid -> candidate id list."""
     lex = lexical.query(chunk, max_candidates_per_query=lexical_max_k)

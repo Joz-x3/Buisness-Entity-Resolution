@@ -4,9 +4,9 @@ Computes exact, fuzzy, token-based, and character n-gram similarities
 between Source 1 and candidate business names.
 """
 
-from difflib import SequenceMatcher
 from typing import Dict, List, Set
 
+from rapidfuzz import fuzz
 from rapidfuzz.distance import Levenshtein, JaroWinkler
 
 
@@ -42,8 +42,8 @@ def compute_name_features(name1: str, name2: str) -> Dict[str, float]:
     # 1. Exact match
     exact_match = 1.0 if s1 == s2 else 0.0
 
-    # 2. SequenceMatcher ratio (Gestalt Pattern Matching)
-    seq_ratio = SequenceMatcher(None, s1, s2).ratio()
+    # 2. Sequence ratio (C++ accelerated rapidfuzz)
+    seq_ratio = float(fuzz.ratio(s1, s2) / 100.0)
 
     # 3. Jaro-Winkler similarity
     jw_sim = _jaro_winkler_similarity(s1, s2)
