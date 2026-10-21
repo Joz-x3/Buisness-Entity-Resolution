@@ -1,6 +1,5 @@
 ================================================================================
 AWS ML CHALLENGE 2026: BUSINESS ENTITY RESOLUTION - PROJECT SUMMARY
-Team: TECHNOBLADE
 ================================================================================
 
 1. WHAT IS THE PROBLEM?

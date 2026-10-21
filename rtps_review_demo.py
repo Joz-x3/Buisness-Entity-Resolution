@@ -56,7 +56,7 @@ def print_banner():
 {CYAN}========================================================================================
    REAL-TIME PROJECT SEMINAR (RTPS) - MACHINE LEARNING LAB REVIEW
    PROJECT: MULTI-SOURCE BUSINESS ENTITY RESOLUTION & LINKAGE
-   TEAM: TECHNOBLADE  |  FRAMEWORK: 2-STAGE HYBRID ENSEMBLE (LightGBM + XGBoost)
+   FRAMEWORK: 2-STAGE HYBRID ENSEMBLE (LightGBM + XGBoost)
 ========================================================================================{RESET}
 """
     print(banner)
@@ -217,7 +217,7 @@ def generate_evaluation_plots(y_true, y_prob, threshold, feature_names, feature_
     # 5. Combined Master 4-in-1 Evaluation Dashboard Window
     try:
         fig, axes = plt.subplots(2, 2, figsize=(14, 10), dpi=100)
-        fig.canvas.manager.set_window_title("RTPS ML Review Dashboard - Team TECHNOBLADE")
+        fig.canvas.manager.set_window_title("Business Entity Resolution - ML Review Dashboard")
         fig.suptitle("Machine Learning Lab Review: Business Entity Resolution Performance\nModel: LightGBM + XGBoost Ensemble  |  Accuracy: 95.95%  |  Macro F0.5: 0.8810",
                      fontsize=14, fontweight="bold")
 
@@ -298,8 +298,8 @@ def run_benchmark_cases(model, threshold=0.55):
     test_cases = [
         {
             "scenario": "Case A: Legal Suffix Variation ('Corp' vs 'Corporation')",
-            "e1": ("Technoblade Solutions Corp", "100 Innovation Way, Suite 400, Austin, TX", "US"),
-            "e2": ("Technoblade Solutions Corporation", "100 Innovation Way, Austin, TX", "US"),
+            "e1": ("Acme Solutions Corp", "100 Innovation Way, Suite 400, Austin, TX", "US"),
+            "e2": ("Acme Solutions Corporation", "100 Innovation Way, Austin, TX", "US"),
             "cand_id": "S2-817263541",
             "expected": "MATCH (Same entity with legal suffix variation)",
         },

@@ -102,21 +102,21 @@ with open(s1_path, "r", encoding="utf-8", errors="replace") as in_f, \
 
 logger.info("Finished processing %d S1 entities. Matches found: %d. Singletons: %d", count, match_count, count - match_count)
 
-# Copy to TECHNOBLADE_submission/output
-sub_output = PROJECT_ROOT / "TECHNOBLADE_submission" / "output"
+# Copy to submission_export/output
+sub_output = PROJECT_ROOT / "submission_export" / "output"
 sub_output.mkdir(parents=True, exist_ok=True)
 shutil.copy2(matching_path, sub_output / "matching_results.tsv")
 shutil.copy2(candidate_path, sub_output / "candidate_pairs.tsv")
 logger.info("Copied files to %s", sub_output)
 
 # Create ZIP
-zip_path = PROJECT_ROOT / "TECHNOBLADE_submission.zip"
+zip_path = PROJECT_ROOT / "submission.zip"
 logger.info("Creating submission zip at %s...", zip_path)
 with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as z:
-    for root, dirs, files in os.walk(PROJECT_ROOT / "TECHNOBLADE_submission"):
+    for root, dirs, files in os.walk(PROJECT_ROOT / "submission_export"):
         for file in files:
             full_p = Path(root) / file
-            rel_p = full_p.relative_to(PROJECT_ROOT / "TECHNOBLADE_submission")
+            rel_p = full_p.relative_to(PROJECT_ROOT / "submission_export")
             z.write(full_p, arcname=str(rel_p))
 
 logger.info("Submission zip created successfully! Size: %d bytes", zip_path.stat().st_size)

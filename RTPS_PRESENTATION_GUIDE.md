@@ -1,6 +1,5 @@
 # RTPS REVIEW & VIVA PRESENTATION GUIDE
 ## AWS ML Challenge 2026: Multi-Source Business Entity Resolution
-**Team**: TECHNOBLADE  
 **Model Architecture**: 2-Stage Hybrid Architecture (Candidate Blocker + LightGBM/XGBoost Ensemble)
 
 ---

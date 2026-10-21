@@ -1,8 +1,4 @@
-# ML Challenge 2026: Business Entity Resolution Solution Template
-
-**Team Name:** TECHNOBLADE  
-**Team Members:** Andrick Williams, Dhanasekar S, HARI S, JOHITH R  
-**Submission Date:** 2026-09-27  
+# ML Challenge 2026: Business Entity Resolution Solution Document
 
 ---
 

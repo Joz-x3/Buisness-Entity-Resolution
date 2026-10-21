@@ -212,15 +212,5 @@ python src/utils/validate_submission.py \
 
 ---
 
-## 👥 Team TECHNOBLADE
-
-Developed for the **AWS Machine Learning Challenge 2026**:
-- **JOHITH R / Melvin Joshua** ([@Joz-x3](https://github.com/Joz-x3))
-- **Andrick Williams** ([@Andrick01](https://github.com/Andrick01))
-- **Dhanasekar S** ([@Dana-0655](https://github.com/Dana-0655))
-- **HARI S**
-
----
-
 ## 📜 License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

@@ -463,7 +463,7 @@ def create_presentation():
 
     examples = [
         ("Case 1: Legal Suffix Variation ('Corp' vs 'Corporation')",
-         "Source 1: 'Technoblade Solutions Corp' | Austin, TX\nSource 2: 'Technoblade Solutions Corporation' | Austin, TX\nResult: MATCH (Probability: 0.9997) -> CORRECT"),
+         "Source 1: 'Acme Solutions Corp' | Austin, TX\nSource 2: 'Acme Solutions Corporation' | Austin, TX\nResult: MATCH (Probability: 0.9997) -> CORRECT"),
         ("Case 2: Human Spelling Typo in Business Title",
          "Source 1: 'Omni Retail Logistics' | Chicago, IL\nSource 3: 'Omni Retial Logistcs' | Chicago, IL\nResult: MATCH (Probability: 0.9998) -> CORRECT"),
         ("Case 3: Similar Business Names in Different Locations",
