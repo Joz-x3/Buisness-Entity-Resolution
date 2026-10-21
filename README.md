@@ -27,7 +27,7 @@ Our solution implements a **Country-Partitioned Two-Stage Architecture** combini
 
 ## 📊 Master Performance Dashboard
 
-![RTPS Master Dashboard](rtps_presentation_assets/rtps_master_dashboard.png)
+![Master Dashboard](assets/master_dashboard.png)
 
 ---
 
@@ -91,65 +91,59 @@ flowchart TD
 
 | Confusion Matrix | ROC Curve |
 | :---: | :---: |
-| ![Confusion Matrix](rtps_presentation_assets/1_confusion_matrix.png) | ![ROC Curve](rtps_presentation_assets/2_roc_curve.png) |
+| ![Confusion Matrix](assets/1_confusion_matrix.png) | ![ROC Curve](assets/2_roc_curve.png) |
 
 | Feature Importance Ranking | F0.5 Threshold Optimization |
 | :---: | :---: |
-| ![Feature Importance](rtps_presentation_assets/3_feature_importance.png) | ![Threshold Optimization](rtps_presentation_assets/4_threshold_optimization.png) |
+| ![Feature Importance](assets/3_feature_importance.png) | ![Threshold Optimization](assets/4_threshold_optimization.png) |
 
 ---
 
 ## 📂 Project Structure
 
 ```text
-├── Business_Entity_Resolution_RTPS_Review.pptx     # Comprehensive slide deck
-├── RTPS_Business_Entity_Resolution_Presentation.pptx # Summary presentation deck
-├── RTPS_PRESENTATION_GUIDE.md                       # Review & viva defense handbook
-├── PROJECT_SUMMARY.txt                              # Plaintext project specifications
-├── build_simple_rtps_ppt.py                         # Automated PowerPoint generator
-├── generate_rtps_ppt.py                             # Advanced presentation builder
-├── rtps_review_demo.py                              # Live interactive evaluation suite
-├── requirements.txt                                 # Pinned Python package dependencies
-├── docs/
-│   └── SOLUTION_DESIGN.md                           # Competition methodology & design paper
+├── README.md                                    # Comprehensive system documentation
+├── requirements.txt                             # Pinned Python package dependencies
+├── LICENSE                                      # Open-source MIT License
+├── demo.py                                      # Live interactive evaluation suite
 ├── models/
 │   └── final_model/
-│       └── model.pkl                                # Serialized LightGBM + XGBoost ensemble
-├── rtps_presentation_assets/                        # High-resolution benchmark charts
+│       └── model.pkl                            # Serialized LightGBM + XGBoost ensemble
+├── assets/                                      # Benchmark charts & evaluation plots
 │   ├── 1_confusion_matrix.png
 │   ├── 2_roc_curve.png
 │   ├── 3_feature_importance.png
 │   ├── 4_threshold_optimization.png
-│   └── rtps_master_dashboard.png
+│   └── master_dashboard.png
 └── src/
-    ├── blocking/                                    # Lexical & TF-IDF candidate generation
+    ├── blocking/                                # Lexical & TF-IDF candidate generation
     │   ├── generate_candidates.py
     │   ├── lexical_block.py
     │   └── tfidf_block.py
-    ├── features/                                    # C++ accelerated RapidFuzz feature extractors
+    ├── features/                                # C++ accelerated RapidFuzz feature extractors
     │   ├── address_features.py
     │   ├── build_features.py
     │   ├── country_features.py
     │   └── name_features.py
-    ├── modeling/                                    # Model training, ensembling & tuning
+    ├── modeling/                                # Model training, ensembling & tuning
     │   ├── baseline.py
     │   ├── predict.py
     │   ├── train_model.py
     │   └── tune_threshold.py
-    ├── preprocessing/                               # Pipeline data ingestion & cleaning
+    ├── preprocessing/                           # Pipeline data ingestion & cleaning
     │   ├── audit.py
     │   ├── load_data.py
     │   ├── normalize.py
     │   ├── run_pipeline.py
     │   └── split.py
-    ├── inference/                                   # Large-scale streaming test inference
+    ├── inference/                               # Large-scale streaming test inference
     │   ├── fast_submission.py
     │   └── predict_test.py
-    ├── evaluation/                                  # Metric scoring & candidate recall
+    ├── evaluation/                              # Metric scoring & candidate recall
     │   ├── candidate_recall.py
     │   ├── error_analysis.py
     │   └── score_f05.py
-    └── utils/                                       # Rule validation & submission verification
+    └── utils/                                   # Rule validation & submission verification
         └── validate_submission.py
 ```
 
@@ -166,18 +160,18 @@ cd Buisness-Entity-Resolution
 pip install -r requirements.txt
 ```
 
-### 2. Run the Live Review & Benchmark Demo
-Execute the real-time demo to evaluate the pre-trained model on validation samples and inspect metrics:
+### 2. Run the Model Demo & Benchmarks
+Execute the demo to evaluate the pre-trained model on benchmark scenarios and view feature rankings:
 
 ```bash
-python rtps_review_demo.py
+python demo.py
 ```
 
 ### 3. Interactive Matching Mode
 Test custom entity pairs live in the terminal:
 
 ```bash
-python rtps_review_demo.py --interactive
+python demo.py --interactive
 ```
 
 *Example input:*
@@ -201,7 +195,7 @@ Outputs generated:
 - `output/candidate_pairs.tsv`: Audit file satisfying subset integrity.
 
 ### 2. Validate Submission Format
-Verify outputs against strict competition requirements (row counts, formatting, singleton handling):
+Verify outputs against competition requirements (row counts, formatting, singleton handling):
 
 ```bash
 python src/utils/validate_submission.py \

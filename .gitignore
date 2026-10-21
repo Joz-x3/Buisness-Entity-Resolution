@@ -12,12 +12,22 @@ data/
 *.csv
 *.parquet
 
-# Output datasets & Intermediate inference files
-output/*.tsv
-output/ber_infer_*
+# Output datasets, logs & intermediate inference files
+output/
+artifacts/
+*.log
+
+# Presentations & Review summaries
+*.pptx
+PROJECT_SUMMARY.txt
+RTPS_PRESENTATION_GUIDE.md
+docs/
+build_simple_rtps_ppt.py
+generate_rtps_ppt.py
 
 # Submission archives and temp submission directory
 TECHNOBLADE_submission/
+submission_export/
 *.zip
 *.tar.gz
 *.7z
